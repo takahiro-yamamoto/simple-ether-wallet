@@ -19,9 +19,8 @@ Template.transactionItem.helpers({
   },
 
   //送金額をEtherの単位で取得
-  amountInEther: function(){
-    var amountEth = web3.fromWei(this.amount, "ether");
-    return parseFloat(amountEth).toFixed(3);
+  amountInYMC: function(){
+    return this.amount;
   },
 
   //承認回数の取得
@@ -32,4 +31,3 @@ Template.transactionItem.helpers({
     return count;
   }
 });
-

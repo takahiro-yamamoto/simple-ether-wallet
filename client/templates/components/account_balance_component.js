@@ -6,6 +6,10 @@ Template.accountBalanceComponent.helpers({
   }
 });
 
+Template.accountBalanceItem.onCreated(function() {
+    this._balance = new ReactiveVar;
+});
+
 //テンプレート「accountBalanceItem」のヘルパー
 Template.accountBalanceItem.helpers({
   //アカウントの名前の取得
@@ -18,7 +22,10 @@ Template.accountBalanceItem.helpers({
   },
   //アカウントが持つEtherの残高を取得（単位はEtherで、小数点３ケタまで取得）
   balance: function(){
-    var balanceEth = web3.fromWei(this.balance, "ether");
-    return parseFloat(balanceEth).toFixed(3);
+    var instance = Template.instance()
+    ymc.balanceOf.call(this.address, function(err, res) {
+      instance._balance.set(res);
+    })
+    return instance._balance.get();
   }
 });

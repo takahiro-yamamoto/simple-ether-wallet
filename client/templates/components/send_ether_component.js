@@ -32,7 +32,7 @@ Template.sendEtherComponent.events({
     var fundInfo = {
       fAddr: $(e.target).find('[name=f-addr]').val(),
       tAddr: $(e.target).find('[name=t-addr]').val(),
-      amount: web3.toWei($(e.target).find('[name=amount]').val(),'ether') 
+      amount: $(e.target).find('[name=amount]').val()
     };
 
     if(EthAccounts.findOne({address: fundInfo.fAddr}, {reactive: false})) {
@@ -53,9 +53,9 @@ Template.sendEtherComponent.events({
 
 //送金確認画面のヘルパー
 Template.sendConfirmModalTemplate.helpers({
-  sendAmountInEther: function(){
-    var amountEth = web3.fromWei(Session.get("sendEther.fundInfo").amount,'ether');
-    return parseFloat(amountEth).toFixed(3);
+  sendAmountInYMC: function(){
+    // var amountEth = web3.fromWei(Session.get("sendEther.fundInfo").amount,'ether');
+    return Session.get("sendEther.fundInfo").amount;
   },
   fAddr: function(){
     return Session.get("sendEther.fundInfo").fAddr;
@@ -75,12 +75,10 @@ Template.sendConfirmModalTemplate.events({
   'click #send': function(e) {
     e.preventDefault();
     var fundInfo = Session.get("sendEther.fundInfo");
-    //非同期関数「web3.eth.sendTransaction」を呼ぶことでノードにトランザクションを送信
-    web3.eth.sendTransaction({
-      from: fundInfo.fAddr,
-      to: fundInfo.tAddr,
-      value: fundInfo.amount
-    }, function(error, txHash){ //戻り値としてトランザクションハッシュ値が返る
+
+    ymc.transfer.sendTransaction(fundInfo.tAddr, fundInfo.amount, {
+      from: fundInfo.fAddr
+    }, function(error, txHash) {
       console.log("Transaction Hash:", txHash, error);
       if(!error) {
         //発行したトランザクション情報をTransactionsコレクションに挿入
@@ -93,8 +91,31 @@ Template.sendConfirmModalTemplate.events({
           fee: estimatedFeeInWei().toString(10),
         }});
       } else {
-        alert("Ether Transfer Failed");
+        alert("YMC Transfer Failed");
       }
     });
+
+    // //非同期関数「web3.eth.sendTransaction」を呼ぶことでノードにトランザクションを送信
+    // web3.eth.sendTransaction({
+    //   from: fundInfo.fAddr,
+    //   to: fundInfo.tAddr,
+    //   value: fundInfo.amount
+    // }, function(error, txHash){ //戻り値としてトランザクションハッシュ値が返る
+    //   console.log("Transaction Hash:", txHash, error);
+    //   if(!error) {
+    //     //発行したトランザクション情報をTransactionsコレクションに挿入
+    //     Transactions.upsert(txHash, {$set: {
+    //       amount: Session.get("sendEther.fundInfo").amount,
+    //       from: Session.get("sendEther.fundInfo").fAddr,
+    //       to: Session.get("sendEther.fundInfo").tAddr,
+    //       timestamp: getCurrentUnixTime(),
+    //       transactionHash: txHash,
+    //       fee: estimatedFeeInWei().toString(10),
+    //     }});
+    //   } else {
+    //     alert("Ether Transfer Failed");
+    //   }
+    // });
+
     $('#sendConfirmModal').modal('hide');
 }});

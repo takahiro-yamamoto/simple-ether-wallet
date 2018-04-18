@@ -2,11 +2,11 @@
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand" href="{{pathFor 'dashboard'}}">Simple Ether Wallet</a>
+        <a class="navbar-brand" href="{{pathFor 'dashboard'}}">Simple YMC Wallet</a>
       </div>
       <ul class="nav navbar-nav">
         <li class="{{activeIfCurrent 'dashboard'}}"><a href="{{pathFor 'dashboard'}}">Dashboard</a></li>
-        <li class="{{activeIfCurrent 'send'}}"><a href="{{pathFor 'send'}}">Send Ether</a></li>
+        <li class="{{activeIfCurrent 'send'}}"><a href="{{pathFor 'send'}}">Send YMC</a></li>
       </ul>
     </div>
   </nav>
@@ -14,4 +14,3 @@
     {{> yield}}
   </main>
 </template>
-
